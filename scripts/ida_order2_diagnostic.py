@@ -36,7 +36,7 @@ from system import (
 )
 
 
-OUT=ROOT/"benchmark"/"results"/"ida"
+OUT=ROOT/"results"/"ida"
 OUT.mkdir(parents=True,exist_ok=True)
 
 IDA5_FILE=OUT/"ida_work_precision.csv"
@@ -47,7 +47,7 @@ BDF2_FILE=OUT/"bdf2_audit.csv"
 # Frozen benchmark
 # ----------------------------------------------------------------------
 
-N=64
+N=8192
 neq=4*N-3
 
 m_heavy,m_light=1.0,0.5
