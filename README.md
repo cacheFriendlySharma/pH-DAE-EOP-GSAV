@@ -33,7 +33,6 @@ The numerical experiments investigate
 - comparison with SUNDIALS IDA.
 
 ## Repository structure
-
 .
 ├── benchmark/
 │   └── results/
@@ -43,6 +42,7 @@ The numerical experiments investigate
 │       ├── nonlinearity_strength/
 │       ├── size_scaling/
 │       ├── structure/
+│       ├── toy_nonlinear_solve/
 │       └── work_precision/
 ├── scripts/
 │   ├── convergence.py
@@ -54,6 +54,7 @@ The numerical experiments investigate
 │   ├── nonlinearity_strength.py
 │   ├── size_scaling.py
 │   ├── structure.py
+│   ├── toy_nonlinear_solve.py
 │   └── work_precision.py
 ├── src/
 │   ├── implicit_midpoint.py
@@ -70,7 +71,8 @@ The numerical experiments investigate
 
 src/ contains the numerical methods and benchmark model implementation,
 while scripts/ contains the experiments reported in the paper.
-The corresponding generated data are stored under benchmark/results/.
+The corresponding generated data and plots are stored under benchmark/results/, including
+the low-dimensional nonlinear stress test in toy_nonlinear_solve/.
 
 ## Requirements
 
