@@ -100,14 +100,12 @@ python scripts/size_scaling.py
 
 
 The corresponding results are written to subdirectories of
-
-text
 benchmark/results/
 
 
 For the SUNDIALS comparison:
 
-bash
+
 python scripts/ida_work_precision.py
 python scripts/ida_order2_diagnostic.py
 python scripts/ida_gsav_structure.py
