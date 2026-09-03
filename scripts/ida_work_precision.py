@@ -38,19 +38,17 @@ from system import (
 from time_integrators import eop_gsav
 
 
-OUT=ROOT/"benchmark"/"results"/"ida"
+OUT=ROOT/"results"/"ida"
 OUT.mkdir(parents=True,exist_ok=True)
 
-WORK_PRECISION=(
-    ROOT/"benchmark"/"results"/"work_precision"/"work_precision.csv"
-)
+
 
 
 # ----------------------------------------------------------------------
 # Frozen benchmark
 # ----------------------------------------------------------------------
 
-N=64
+N=8192
 neq=4*N-3
 
 m_heavy,m_light=1.0,0.5
@@ -756,29 +754,8 @@ for r in ida_rows:
 
 
 # ----------------------------------------------------------------------
-# Recompute BDF2 error on exactly the same audit grid
+# Recompute and time BDF2 on exactly the same machine/audit grid
 # ----------------------------------------------------------------------
-
-if not WORK_PRECISION.exists():
-    raise FileNotFoundError(
-        f"Existing BDF2 timing data not found:\n{WORK_PRECISION}"
-    )
-
-
-bdf2_times={}
-
-with open(
-    WORK_PRECISION,
-    newline="",
-) as fcsv:
-    for row in csv.DictReader(fcsv):
-        if row["method"]=="BDF2-EOP":
-            bdf2_times[
-                float(row["dt"])
-            ]=float(
-                row["runtime_median"]
-            )
-
 
 def run_bdf2(dt):
     return eop_gsav(
@@ -797,20 +774,43 @@ def run_bdf2(dt):
     )
 
 
+print("\nBDF2 warm-up...")
+run_bdf2(1e-2)
+
 bdf2_rows=[]
 
 print(
-    "\nRecomputing BDF2 errors "
+    "\nRecomputing BDF2 errors and timings "
     "on the common audit grid...\n"
 )
 
 for dt in bdf2_dts:
-    if dt not in bdf2_times:
-        raise RuntimeError(
-            f"No measured BDF2 runtime for dt={dt}"
+    times=[]
+    representative=None
+
+    print(
+        f"dt={dt:.5g}",
+        end="",
+        flush=True,
+    )
+
+    for rep in range(1,repeats+1):
+        tic=time.perf_counter()
+        result=run_bdf2(dt)
+        elapsed=time.perf_counter()-tic
+
+        times.append(elapsed)
+
+        if representative is None:
+            representative=result
+
+        print(
+            f"  r{rep}:{elapsed:.4f}s",
+            end="",
+            flush=True,
         )
 
-    result=run_bdf2(dt)
+    result=representative
 
     idx=np.rint(
         t_audit/dt
@@ -838,20 +838,23 @@ for dt in bdf2_dts:
         H_ref,
     )
 
+    runtime=float(np.median(times))
+
     row={
         "dt":float(dt),
         "state_error":Ex,
         "H_error":EH,
-        "runtime_median":bdf2_times[dt],
+        "runtime_median":runtime,
+        "runtime_min":float(np.min(times)),
+        "runtime_max":float(np.max(times)),
     }
 
     bdf2_rows.append(row)
 
     print(
-        f"dt={dt:.5g}"
         f"  Ex={Ex:.3e}"
         f"  EH={EH:.3e}"
-        f"  time={bdf2_times[dt]:.4f}s"
+        f"  median={runtime:.4f}s"
     )
 
 
