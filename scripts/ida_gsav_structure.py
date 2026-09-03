@@ -28,7 +28,7 @@ from time_integrators import eop_gsav
 
 
 # benchmark
-N,dt,T=64,1e-2,5.0
+N,dt,T=8192,1e-2,5.0
 beta,beta_J,beta_R=4.0,4.0,2.0
 K_M,eta=2.0,0.4
 m_light,m_heavy=0.5,1.0
@@ -214,7 +214,7 @@ rows=[
     },
 ]
 
-print("\nStructure comparison, N=64\n")
+print("\nStructure comparison, N=8192\n")
 print(
     f"{'method':18s} {'native viol.':>13s} {'phys. viol.':>13s} "
     f"{'balance':>12s} {'alg. defect':>12s} {'|r-H-C0|':>12s} {'setups':>7s}"
